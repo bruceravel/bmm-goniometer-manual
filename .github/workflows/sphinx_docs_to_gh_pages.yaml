@@ -4,11 +4,11 @@ on:
   push:
   workflow_dispatch:
     branches:
-      - master
+      - main
   # pull_request:
   #   types: [closed]
   #   branches:
-  #     - master
+  #     - main
 
 # workflow_dispatch:        # Un comment line if you also want to trigger action manually
 # permissions:
@@ -34,7 +34,7 @@ jobs:
       - name: Running the Sphinx to gh-pages Action
         uses: uibcdf/action-sphinx-docs-to-gh-pages@e8f97e2f34d18fd153f5dc5b1df755d07207d5ee # v1.1.0
         with:
-          branch: master
+          branch: main!
           dir_docs: docs
           sphinxapiopts: '--separate -o . ../'
           sphinxapiexclude: '../*setup* ../*.ipynb'
