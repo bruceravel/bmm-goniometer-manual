@@ -13,20 +13,19 @@ Goniometer alignment for XRR
 ============================
 
 To start, place the Mythen in the most downstream position on the
-*what is the arm called?*  Measure and record the gap value |nd|
-typically around 90 mm. 
+:olive:`(what is the arm called?)` Measure and record the gap value |nd|
+typically around 90 mm.  See :numref:`Figure %s <fig-gap>` for a photo
+identifying what the gap is.
 
-.. todo:: Take a picture and show what "the gap" is.
 
 XRD mode of the Photon Delivery System
 --------------------------------------
 
-Need to explain how to do this...
+.. admonition:: Future Tech!
 
+   Implement ``change_edge()`` in this profile.
 
-.. code-block:: python
-
-   RE(mv(attenuator, 2))
+   Also need to explain how to use that to change energy
 
 
 
@@ -65,10 +64,30 @@ Also mount the alignment pin on the goniometer head.
 
    .. image:: _images/dummy.png
 
-   .. image:: _images/dummy.png
+   .. image:: _images/align/analog_switch.jpg
 
    (Left) The aligment pin mounted on the goniometer head.  (Right)
    The switch for analog video signals.
+
+
+Verify that the direct beam hits the camera, then evaluate the size
+and shape of the beam. You may want to apply some attenuation to the
+beam |nd| the YAG crystal bleeds at high flux, making it hard to
+assess the actual size and shape of the beam.
+
+.. code-block:: python
+
+   RE(mv(attenuator, 2))
+
+The beam should be a small oval with the axes of the oval parallel and
+perpendicular to gravity.  If the oval is slanted, try adjusting the
+yaw of the focusing mirror (:numref:`See Section %s
+<focusing_mirror>`), for example
+
+.. code-block:: python
+
+   RE(mvr(m2.yaw, 0.01))
+
 
 With the shadow of the pin in the focused, direct beam, note its
 position on screen.  Rotate the phi axis by 180 degrees.  Note the new
@@ -102,6 +121,7 @@ movement.
    analysis on shadow of pin to compute correct ``table.vertical`` and
    ``table.lateral`` positions.
 
+.. _slit_align:
 
 Slit alignment
 --------------
@@ -140,14 +160,15 @@ The optional arguments to this plan are
   Scan dwell time (default is 0.5 seconds)
 
 
-The slit alignment procedure will run a linescan (*numref to linescan
-explanation*) on each of the four slits individually, plotting the
-signal on the monitor (*numref to monitor explanation*) versus slit
-position.  This signal should be a step-like function, so the result
-is fit to an error function.  The slit is moved to the centroid of the
-fitted error function and the offset of the slit is reset to define
-the zero position.  The result of an individual slit scan looks like 
-:numref:`Figure %s <fig-slitscan>`.
+
+The slit alignment procedure will run a linescan :olive:`(need link to
+linescan explanation)` on each of the four slits individually,
+plotting the signal on the monitor :olive:`(need link to monitor
+explanation)` versus slit position.  This signal should be a step-like
+function, so the result is fit to an error function.  The slit is
+moved to the centroid of the fitted error function and the offset of
+the slit is reset to define the zero position.  The result of an
+individual slit scan looks like :numref:`Figure %s <fig-slitscan>`.
 
 .. _fig-slitscan:
 .. figure:: _images/align/slit_bot.png
@@ -165,6 +186,8 @@ something like
    RE(mvr(slits.hsize, 1))
    RE(mvr(slits.vsize, 0.120))
 
+.. _dethor_align:
+
 Horizontal detector alignment
 -----------------------------
 
@@ -180,6 +203,11 @@ beam, something like:
 
    RE(mv(attenuator, 7))
 
+then perform a linescan of the dethor motor:
+
+.. code-block:: python
+
+   RE(linescan(dethor, 'mythen', -3, 3, 61)
 
 The live plot will show the progress of the scan.  Once the scan is
 finished, some simple peak interpretation is performed, shown in
@@ -214,10 +242,13 @@ or 4 strips, as the strip width is 50 |mu|\ m, as shown on the
 <https://dectris.com/en/detectors/x-ray-detectors/mythen2/mythen2-for-synchrotrons/>`__
 and there 1280 strips on the detector.
 
-The direct beam should be around the 200\ :sup:`th` strip.  Adjust
-the gap on the flight path holder so that is approximately true.  A
-simple calculation of the center of the illuminated area from the
-count will be good enough.  See :numref:`Figure %s <fig-gap>`.
+The direct beam should be around the 200\ :sup:`th` strip.  Adjust the
+gap on the flight path holder so that is approximately true.  A simple
+calculation of the center of the illuminated area from the count will
+be good enough. This places the beam closer to the bottom of the
+detector, thus most of the strips are above the direct beam |nd| also,
+then, the reflected beam in an XRR experiment.  See :numref:`Figure %s
+<fig-gap>`.
 
 
 .. _fig-gap:
@@ -228,6 +259,8 @@ count will be good enough.  See :numref:`Figure %s <fig-gap>`.
 
    The gap measures the elevation of the Mythen and
    its flight path on the hand-operated vertical jack.
+
+.. _mythen_cal:
 
 Mythen Calibration
 ------------------
@@ -249,13 +282,13 @@ Typical scan parameters are:
 The optional arguments to ``mythen_calibration`` are:
 
 ``start``
-  From delta=0, the starting angle of the scan.
+  From delta=0, the starting angle of the scan, in degrees
 
 ``stop``
-  From delta=0, the ending position of the scan
+  From delta=0, the ending position of the scan, in degrees
 
 ``nsteps``
-  The number of steps in the scan.
+  The number of steps in the scan
 
 ``inttime``
   The dwell time at each point in the scan. Default is 0.1 seconds

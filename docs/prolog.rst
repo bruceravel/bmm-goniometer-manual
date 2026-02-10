@@ -23,6 +23,7 @@
 .. |Sigma|   unicode:: U+003A3 .. GREEK CAPITAL LETTER SIGMA
    :rtrim:
 .. |alpha|   unicode:: U+003B1 .. GREEK SMALL LETTER ALPHA
+.. |theta|   unicode:: U+003B8 .. GREEK SMALL LETTER THETA
 .. |nu|      unicode:: U+003BD .. GREEK SMALL LETTER NU
    :ltrim:
 .. |beta|    unicode:: U+003B2 .. GREEK SMALL LETTER BETA

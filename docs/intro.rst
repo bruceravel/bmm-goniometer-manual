@@ -15,7 +15,7 @@ Introduction to BMM
 BMM is NIST's :red:`B`\ eamline for :red:`M`\ aterials :red:`M`\ easurement.
 
 At the unix command line, do this to start the Bluesky user
-interface
+interface:
 
 .. code-block:: bash
 
@@ -40,11 +40,12 @@ one will need to do at the beamline, including:
 TL;DR
 -----
 
-**Open/close the shutter**
-   ``shb.open()`` and ``shb.close()``, see :numref:`{name}, Section {number} <shutters>`
+..
+   **Open/close the shutter**
+      ``shb.open()`` and ``shb.close()``, see :numref:`{name}, Section {number} <shutters>`
 
-**Sample alignment scans**
-   Use the ``RE(linescan())`` command, see :numref:`{name}, Section {number} <linescan>`
+   **Sample alignment scans**
+       Use the ``RE(linescan())`` command, see :numref:`{name}, Section {number} <linescan>`
 
 
 ..
@@ -173,12 +174,13 @@ of several members of NSLS-II's DSSI program.  In particular, I want
 to thank Dan Allan, Tom Caswell, Josh Lynch, Jakub Wlodek, Max
 Rakitin, Dmitri Gavrilov, Stuart Campbell, Abby Giles, Garrett Bishof,
 Nate Maytan, Matt Snyder, Oksana Ivashkevych, Ryan Jaskiel, AJ Sliger,
-and Jun Ma.  
+John Sinsheimer, and Jun Ma.  
 
 Thanks to every BMM user |nd| being a BMM user means being a beta tester
 for the beamline software!
 
-BMM makes use of `lots of great python tools
+Aside from the Bluesky ecosystem, BMM makes use of `lots of great
+python tools
 <https://speakerdeck.com/jakevdp/the-unexpected-effectiveness-of-python-in-science?slide=52>`__.
 Matt Newville's `Larch <http://xraypy.github.io/xraylarch/>`__ is used
 to process every XAS scan that gets measured and Matt's `lmfit
