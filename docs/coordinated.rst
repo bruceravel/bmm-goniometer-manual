@@ -220,6 +220,46 @@ might be helpful, for example:
 + adjust either the post-mono or hutch slits
 + retune the pitch of the monochromator
 
+.. _shutters:
+
+Shutters
+~~~~~~~~
+
+**Open and close the photon shutter**
+   In the nomenclature of BMM, the photon shutter is ``shb``.  Open
+   and close this shutter with::
+
+     shb.open()
+     shb.close()
+
+   These plans are somewhat more elaborate than simply toggling the
+   state of the shutters.  It happens from time to time that the
+   shutter does not trigger when told to open or close.  So, these
+   plans try up to three times to open or close the photon shutter,
+   with a 1.5 second pause between attempts.
+
+   If you wish to open or close the photon shutter (using the same
+   multiple attempt algorithm) in a plan, do::
+
+     yield from shb.open_plan()
+     yield from shb.close_plan()
+
+**Open and close the safety shutter**
+   This is the front-end shutter.  Closing it takes light off the
+   monochromator, which is not something you typically want to do
+   during an experiment.  That said, the safety shutter is ``sha`` in
+   the BMM nomenclature::
+
+     sha.open()
+     sha.close()
+
+   and::
+
+     yield from sha.open_plan()
+     yield from sha.close_plan()
+
+
+
 Monochromator
 ~~~~~~~~~~~~~
 

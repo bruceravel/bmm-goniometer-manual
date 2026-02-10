@@ -53,7 +53,7 @@ ________________
   Move any named motor BY an amount (``delta`` is an example) |harr| :numref:`Section %s <goniometer_axes>`
 
 ``RE(mv(attenuator, N))``
-  Set attenuator, N is an integer between 0 and 15
+  Set attenuator, N is an integer between 0 and 15 |harr| :numref:`Section %s <attenuator>`
 
 ``RE(count([detector], N))``
   Count on a detector N times.  Detector can be ``struck``, ``mythen``, etc
