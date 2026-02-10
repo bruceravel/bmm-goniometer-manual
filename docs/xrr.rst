@@ -1,4 +1,4 @@
-..
+..  
    This document was developed primarily by a NIST employee. Pursuant
    to title 17 United States Code Section 105, works of NIST employees
    are not subject to copyright protection in the United States. Thus
@@ -7,20 +7,12 @@
 
    See the LICENSE file for details.
 
+.. _xrr:
 
-BMM Goniometer Users Manual
-===========================
+X-ray Reflectivity
+==================
 
-BMM is NIST's :red:`B`\ eamline for :red:`M`\ aterials :red:`M`\ easurement.
+Measuring XRR...
 
-.. toctree::
-   :maxdepth: 2
-   :numbered:
-   :caption: User documentation
-
-   intro.rst
-   coordinated.rst
-   detectors.rst
-   align.rst
-   xrr.rst
-   cheatsheet.rst
+.. note:: XRR measurements have not yet been tested as of February
+          2026
