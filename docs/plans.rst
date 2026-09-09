@@ -473,3 +473,89 @@ that the cen is at 0.  This should be a very small change in offset.
    com and cen are at the same position.  This is a good alignment!
 
 
+.. _sample_alignment:
+
+Sample alignment
+----------------
+
+A sample for XRR is usually a large, flat wafer.  The correct
+alignment has the sample surface parallel to the beam path and at a
+height such that it blocks half the beam.  With that alignment, the
+center of the beam will be on the center of the sample as the incident
+angle changes and the beam will spread symmetrically over the length
+of the sample as the angle changes.
+
+
+To find the correct vertical position |nd| ``samplez`` |nd| of the
+flat sample:
+
+.. code-block:: python
+
+   RE(sample_vertical())
+
+The optional arguments to ``sample_vertical()`` are:
+
+``start``
+  Starting point measured in mm from the current position of
+  ``samplez``.  Default is -0.5.
+
+``stop``
+  Ending point measured in mm from the current position of
+  ``samplez``.  Default is 0.5.
+
+``nsteps``
+  The number of steps in the scan.  Default is 101.
+
+``inttime``
+  The dwell time in seconds at each step of the scan.  Default is 0.1
+  second.
+
+Upon completion of the scan, an error function will be fit to the
+lineshape.  The centroid of the lineshape will be the position of half
+intensity, i.e. where the sample is blocking half of the beam.
+``samplez`` will be moved to that position.
+
+.. todo:: Show a picture
+
+
+
+To find the correct angular position |nd| ``eta`` |nd| of the flat
+sample:
+
+.. code-block:: python
+
+   RE(sample_eta())
+
+``start``
+  Starting point measured in degrees from the current position of
+  ``eta``.  Default is -0.25.
+
+``stop``
+  Ending point measured in degrees from the current position of
+  ``eta``.  Default is 0.25.
+
+``nsteps``
+  The number of steps in the scan.  Default is 51.
+
+``inttime``
+  The dwell time in seconds at each step of the scan.  Default is 0.1
+  second.
+
+``choice``
+  A choice of how to select the zero of ``eta``.  The choices are:
+
+  + ``"peak"``: max signal value
+  + ``"com"``: the point of the center of mass of the signal
+  + ``"cen"``: center point of the full width at half max
+  + ``"crossing"``: crossing point of lines regressed to the two sides
+    of the peak
+
+Upon completion of the scan, all the peak statistics (peak, com, cen,
+and crossing) will be computed and reported on screen.  The value of
+``choice`` will be used to move ``eta`` to position.  That position
+will be redefined in EPICS as the zero of ``ete``.
+
+.. todo:: Show a picture
+
+Iteration of ``RE(samples_vertical())`` and ``RE(sample_eta())`` may
+be required.

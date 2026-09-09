@@ -21,13 +21,65 @@ Preparing for XRR
 XRD mode of the photon delivery system
 --------------------------------------
 
+The very first step for setting up the goniometer for XRR is to move
+the photo delivery system to the correct position for photo delivery
+to the goniometer position.
+
+This involves moving
+ 
++ the monochromator to the specified energy
++ the focusing mirror to the correct pitch and bend
++ the harmonic rejection mirror out of the way
++ the hutch slit assembly (:numref:`Section %s <blslits>`) to
+  the correct height
++ the XAFS table to the correct height for supporting the
+  flight path.
+
+To set up the photon delivery system for scattering at 8600 eV:
+
 .. code-block::
 
-   RE(xrdmode(8600))
+   RE(xrdmode())
 
-Discuss other energies.
+or specify an energy:
 
-Discuss what is happening.
+.. code-block::
+
+   RE(xrdmode(12000))
+
+The single argument is the target energy in eV units.  The default is
+8600 eV, the normal operating energy for experiments on the
+goniometer.
+
+This plan will look up the correct positions of all motors in the
+`beamline lookup table
+<https://github.com/NSLS2/bmm_tools/blob/main/src/bmm_tools/optics/mode_data.py>`__
+and set all those axes moving to their correct positions.
+
+Once all axes have arrived in position, a scan of the rocking curve of
+the monochromator will be performed and ``dcm_pitch`` will be moved to
+the peak of that scan.
+
+Finally, the hutch slits will be opened wide, 7 mm wide by 1 mm tall,
+allowing the beam size to be determined by the :numref:`gomiometer
+slits (see Section %s) <goniometer_slits>`.
+
+.. admonition:: Future tech!
+
+   This plan will eventually be used to perform scattering
+   measurements at any energy above 8000 eV without having to do a
+   time-consuming realignment of the goniometer.
+
+   To obtain consistency in lateral position of the focused beam,
+   Bruce is working with BLOP team in DSSI to optimize ``dcm_roll``
+   and the orientation of the focusing mirror to provide stable beam
+   position over the energy range from 8 keV to 20 keV.  
+
+   To obtain consistency in vertical position, a scan of the pitch of
+   the focusing mirror into the goniometer slits will deliver
+   consistent beam height.
+
+
 
 
 Goniometer alignment strategy
@@ -36,19 +88,23 @@ Goniometer alignment strategy
 .. note:: A few things that are explicit steps in SPEC are handled
 	  differently in Bluesky.  For example, the Mythen
 	  ``full_mca``, ROI1, is set at Bluesky startup and does not
-	  need to be explicitly set.
+	  need to be explicitly set.  All alignment steps and
+	  associated data processing are discussed in detail in
+	  :numref:`Section %s <plans>`.
 
-1. Place the Mythen in the most downstream position on the
+#. Place the Mythen in the most downstream position on the
    :olive:`(what is the arm called?)`. Measure and record the gap value
-   |nd| typically around 90 mm.  
-
-2. Measure and record the gap.  See :numref:`Figure %s <fig-gap>` for a
+   |nd| typically around 90 mm.  See :numref:`Figure %s <fig-gap>` for a
    photo identifying what the gap is.  To record the gap in a way that
-   the software can use, do: ``xrduser.gap = <value>``.
+   the data acquisition software can use, do: 
 
-3. Using the YAG camera, center the pin under the beam.
+   .. code-block:: python
+   
+      xrduser.gap = 90.0
 
-   a. open slits wide
+#. Using the YAG camera, center the pin under the beam.
+
+   a. Open the slits wide
 
       .. code-block:: python
 
@@ -56,42 +112,41 @@ Goniometer alignment strategy
 	 RE(mv(slits.hsize, 4))
 
 
-   b. adjust ``samplez`` to put the pin in the beam by seeing its shadow
+   b. Adjust ``samplez`` to put the pin in the beam by seeing its shadow
       on the YAG.  
 
       .. code-block:: python
 
 	 RE(mvr(samplez, <amount>))
 
-   c. mark the position of the pin in the beam
-   d. rotate ``phi`` stage by 180 degrees
-   e. mark pin again, then mark the geometric center of those two
+   c. Mark the position of the pin in the beam
+   d. Rotate ``phi`` stage by 180 degrees
+   e. Mark pin again, then mark the geometric center of those two
       markings
-   f. move ``table.lateral`` so that center of the two markings is in
+   f. Move ``table.lateral`` so that the center of the two markings is in
       the center of the beam
-   g. rotate ``phi`` by -180 degrees to verfiy this alignment
-   h. rotate ``chi`` by -90 degrees: 
+   g. Rotate ``phi`` by -180 degrees to verfiy this alignment
+   h. Rotate ``chi`` by -90 degrees: 
 
       .. code-block:: python
 
 	 RE(mvr(chi, -90))
 
-   i. repeat steps c to g
-   j. rotate ``chi`` back to 0 degrees: 
+   i. Repeat steps (c) to (g) for this orientation
+   j. Rotate ``chi`` back to 0 degrees: 
 
       .. code-block:: python
 
 	 RE(mvr(chi, 90))
 
-      .. admonition:: Future Tech!
+   .. admonition:: Future Tech!
 
-	 Automate all of this using a camera that is supported by
-	 AreaDetector.  Automate the angle motions and determination
-	 of pin shadow positions.  Compute and move to target position
-	 in each direction.
+      Automate the pin centering procedure using a camera that is
+      supported by AreaDetector.  Automate the angle motions and
+      determination of pin shadow positions.  Compute and move to
+      target position in each direction.
 
-
-4. Align the slits to be centered around the beam and define the 0 of
+#. Align the slits to be centered around the beam and define the 0 of
    each slit to be in the position that cuts the beam in half.  This is
    done by: 
 
@@ -99,22 +154,25 @@ Goniometer alignment strategy
 
       RE(align_slits())
 
-   :numref:`See Section %s <slit_align>`.
+   :numref:`See Section %s <slit_align>` for more details.
 
-5. Set slit sizes: 
+#. Set slit sizes: 
 
    .. code-block:: python
 
       RE(mv(slits.vsize, 0.15, slits.hsize, 1.0))
 
-6. Align the table in the beam:
+   This vertical size |nd| 150 |mu|\ m |nd| is considerably smaller
+   than the focused beam, but appropriate for an XRR measurement.
+
+#. Align the table in the beam:
   
    .. code-block:: python
 
       RE(linescan(table.vertical, 'monitor', -1, 1, 51))
       RE(linescan(table.lateral, 'monitor', -2, 2, 51))
 
-7. Do a linescan (:numref:`Section %s <linescan>`) of the ``dethor``
+#. Do a linescan (:numref:`Section %s <linescan>`) of the ``dethor``
    motor to center the Mythen around the beam in the horizontal
    direction. 
   
@@ -122,9 +180,9 @@ Goniometer alignment strategy
 
       RE(linescan(dethor, 'mythen', -3, 3, 61))
 
-   :numref:`See Section %s <dethor_align>`.
+   :numref:`See Section %s <dethor_align>` for more details.
 
-8. Perform the Mythen calibration scan:
+#. Perform the Mythen calibration scan:
   
    .. code-block:: python
 
@@ -132,17 +190,16 @@ Goniometer alignment strategy
 
    This will set the bounds of the ``dir`` and ``refl`` ROIs and write
    a calibration report to the proposal folder.  It will also record
-   the calibration parameters.
-
-   :numref:`See Section %s <mythen_cal>`.
+   the calibration parameters.  :numref:`See Section %s <mythen_cal>`
+   for more details.
 
    .. admonition:: Question
       :class: attention
 
       What is the CHESS calibration?  This needs to be written.
 
-9. Verify the alignment of beam, goniometer, and detector are
-   acceptable by scanning the ``delta`` are and plotting the signal
+#. Verify the alignment of beam, goniometer, and detector are
+   acceptable by scanning the ``delta`` arm and plotting the signal
    from both ``dir`` and ``refl``.  The ``dir`` plot should be narrower
    than **and** well centered in the ``refl`` plot.
 
@@ -160,9 +217,10 @@ alignment has the sample surface parallel to the beam path and at a
 height such that it blocks half the beam.  With that alignment, the
 center of the beam will be on the center of the sample as the incident
 angle changes and the beam will spread symmetrically over the length
-of the sample.
+of the sample as the angle changes.
 
-.. todo:: Need example screenshots of both sample alignment scans.
+.. todo:: Need example screenshots of the results of both sample
+          alignment scans.
 
 1. Start by aligning the sample vertically.
 
@@ -176,18 +234,17 @@ of the sample.
    blocks half the beam.  That position will be defined as 0 of
    ``samplez`` by setting the EPICS offset accordingly.
 
-2. Then align the pitch of the sample by a linescan (:numref:`Section
-   %s <linescan>`) of ``eta`` against the signal in direct beam
-   ROI.  
-
+2. Then align the pitch of the sample.
 
    .. code-block:: python
 
-      RE(sample_pitch())
+      RE(sample_eta())
 
-   Do an appropriate analysis (more discussion below) to find the zero
-   of ``eta``.  Move to that position and define it as 0 by setting
-   the EPICS offset accordingly.
+   This will run a linescan (:numref:`Section %s <linescan>`) of
+   ``eta`` against the signal in direct beam ROI then do an
+   appropriate analysis (more discussion below) to find the zero of
+   ``eta``.  Move to that position and define it as 0 by setting the
+   EPICS offset accordingly.
 
 3. Iterate those two steps as needed.
 
@@ -201,6 +258,6 @@ will be such that the maximum intensity is not necessarily the proper
 0 of ``eta``.  In that case, a more elaborate analysis is required.
 
 .. todo:: Fully explain the smooth sample algorithm once it is
-          implemented in code.
+          implemented in code.  Show the result of that analysis.
 
 
